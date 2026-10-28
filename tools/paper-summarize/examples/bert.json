@@ -1,0 +1,79 @@
+{
+  "aboutAuthors" : "Google AI Language. BERT (2018) established the pre-train-then-fine-tune recipe with Transformer encoders as the default for NLP understanding tasks.",
+  "authors" : "Devlin, Chang, Lee, Toutanova",
+  "hook" : "Deeply bidirectional pre-training of a Transformer encoder with a masked-language-model objective.",
+  "id" : "bert",
+  "insights" : [
+    {
+      "body" : "GPT is trained left-to-right, so each token attends only to its left context. ELMo concatenates separately trained left-to-right and right-to-left LSTMs, which is only shallow bidirectionality. A naive bidirectional language model would let each token trivially see itself through multi-layer attention, so predicting the next word becomes meaningless. BERT sidesteps this by changing the task: predict deliberately corrupted tokens from context on both sides.",
+      "headline" : "Why bidirectionality needs a new objective"
+    },
+    {
+      "body" : "15% of WordPiece token positions are chosen for prediction. Of these, 80% are replaced with [MASK], 10% with a random token and 10% left unchanged. The mixed strategy reduces the mismatch between pre-training, where [MASK] appears, and fine-tuning, where it never does, and forces the model to keep a good representation of every token because it does not know which ones will be tested. Loss is cross-entropy over the masked positions only, so each sequence gives a learning signal for just 15% of its tokens, and training converges more slowly than a left-to-right LM.",
+      "formula" : "\\mathcal{L}_{MLM}=-\\sum_{i\\in\\mathcal{M}}\\log P\\left(x_i\\mid\\tilde{x}\\right)",
+      "headline" : "Masked language modelling"
+    },
+    {
+      "body" : "A second pre-training task is a binary classification of whether sentence B actually follows sentence A in the corpus (50% yes, 50% random sentence), meant to help tasks such as NLI and QA that reason about sentence pairs. The input is a single sequence of two segments. Each token embedding is the sum of a token, a segment and a learned position embedding. The final hidden state of [CLS] is used for classification. Later work (RoBERTa) found NSP to be of little benefit.",
+      "formula" : "\\text{[CLS]}\\ A\\ \\text{[SEP]}\\ B\\ \\text{[SEP]}||E=E_{token}+E_{segment}+E_{position}",
+      "headline" : "Next sentence prediction and input format"
+    },
+    {
+      "body" : "BERT is a stack of Transformer encoder layers only. BERT-Base (L=12, H=768, A=12 heads, 110M parameters) matches GPT's size for a fair comparison; BERT-Large (L=24, H=1024, A=16, 340M). Pre-training used BooksCorpus (800M words) and English Wikipedia (2,500M words), taking only text passages and ignoring lists and tables so that sequences are contiguous. Training ran for 1M steps with batch size 256 and 512-token sequences (about 40 epochs over 3.3B words), using Adam with warm-up and linear decay. It took 4 days on 4 Cloud TPU pods (16 chips) for Base and 16 pods (64 chips) for Large.",
+      "headline" : "Architecture and pre-training setup"
+    },
+    {
+      "body" : "All pre-trained parameters are updated end to end with a single new output layer. Sentence-pair classification (MNLI, QNLI) uses a softmax on the [CLS] vector. Span QA (SQuAD) introduces a start vector S and an end vector E, scoring each token as the span start or end by a dot product followed by a softmax over the sequence. Sequence labelling (NER) puts a classifier on each token's final hidden state. Typical fine-tuning is only 2–4 epochs with batch size 16 or 32 and learning rate between 2e-5 and 5e-5, taking at most about an hour on a single TPU.",
+      "formula" : "P_i=\\frac{e^{S\\cdot T_i}}{\\sum_j e^{S\\cdot T_j}}",
+      "headline" : "Fine-tuning with minimal task-specific parameters"
+    },
+    {
+      "body" : "Removing NSP hurts QNLI, MNLI and SQuAD. Replacing MLM with a left-to-right model hurts every task, especially SQuAD and token-level tasks, and bolting a BiLSTM on top only partly recovers it. Larger models help even on very small tasks (e.g. MRPC with 3.6k labelled examples), supporting the claim that scale transfers when well pre-trained. A feature-based approach (frozen BERT, concatenating the last four layers into a BiLSTM) on CoNLL-2003 NER reaches 96.1 F1, within 0.3 of full fine-tuning, so BERT works in both modes.",
+      "headline" : "What the ablations show"
+    }
+  ],
+  "lesson" : "The choice of pre-training objective determines what the representation can capture. Corrupt-and-reconstruct objectives allow bidirectional context where next-token prediction does not, at the cost of a weaker training signal per sequence.",
+  "limitations" : "The [MASK] token never appears at fine-tuning time, which leaves a train-test mismatch even with the 80/10/10 trick. Only 15% of tokens give a training signal per pass, which is sample-inefficient. Masked tokens are predicted independently of each other, ignoring dependencies between them, a point XLNet raised. The encoder-only design is not suited to open-ended text generation, and inputs are limited to 512 tokens. Reported gains also mix model size with the pre-training, so the contribution of each factor is hard to separate.",
+  "numbers" : [
+    {
+      "label" : "BERT-Base parameters",
+      "value" : "110M (12 layers, 768 hidden, 12 heads)"
+    },
+    {
+      "label" : "BERT-Large parameters",
+      "value" : "340M (24 layers, 1024 hidden, 16 heads)"
+    },
+    {
+      "label" : "GLUE score (Large)",
+      "value" : "80.5%, +7.7 points absolute over prior best"
+    },
+    {
+      "label" : "MultiNLI accuracy",
+      "value" : "86.7%, +4.6 points absolute"
+    },
+    {
+      "label" : "SQuAD v1.1 test F1",
+      "value" : "93.2 (+1.5)"
+    },
+    {
+      "label" : "SQuAD v2.0 test F1",
+      "value" : "83.1 (+5.1)"
+    },
+    {
+      "label" : "Pre-training corpus",
+      "value" : "BooksCorpus + Wikipedia, 3.3B words"
+    }
+  ],
+  "prerequisites" : [
+    "attention-is-all-you-need"
+  ],
+  "readMinutes" : 10,
+  "shortTitle" : "BERT",
+  "summary" : "BERT pre-trains a deep Transformer encoder with a masked-LM objective (and NSP) on 3.3B words, producing representations conditioned jointly on left and right context. Adding a single output layer and fine-tuning all weights then sets new state of the art on eleven tasks, with large margins on GLUE and SQuAD.",
+  "title" : "BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding",
+  "topic" : "language",
+  "url" : "https://arxiv.org/abs/1810.04805",
+  "venue" : "NAACL 2019",
+  "whoShouldRead" : "You know the Transformer encoder and transfer learning, and want to understand MLM, NSP and how fine-tuning is set up.",
+  "year" : 2018
+}

@@ -1,0 +1,45 @@
+.DS_Store
+.build/
+.swiftpm/
+*.xcodeproj/xcuserdata/
+build/
+
+# Local tooling and generated files
+.DS_Store
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+*.log
+xcuserdata/
+*.xcuserstate
+
+# Credentials and local configuration
+.env
+.env.*
+!.env.example
+*.pem
+*.p12
+*.pfx
+*.key
+*.mobileprovision
+
+# Downloaded audio models and personal queue output
+tools/paper-audio/models/
+queue.txt
+queue-errors.txt
+
+# Local archives, databases, and credential stores
+*.dSYM/
+*.xcarchive/
+*.ipa
+*.keystore
+*.jks
+.netrc
+.npmrc
+.pypirc
+*.sqlite
+*.sqlite3
+*.sqlite-*
+*.db
+*.db-*

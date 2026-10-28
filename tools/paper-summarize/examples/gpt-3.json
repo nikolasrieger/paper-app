@@ -1,0 +1,78 @@
+{
+  "aboutAuthors" : "OpenAI. The paper trains a family of eight autoregressive models up to 175B parameters and studies in-context learning at scale.",
+  "authors" : "Brown, Mann, Ryder, Subbiah, et al.",
+  "hook" : "Scaling an autoregressive Transformer to 175B parameters, and measuring in-context learning without gradient updates.",
+  "id" : "gpt-3",
+  "insights" : [
+    {
+      "body" : "The paper defines three settings by how many task demonstrations K are placed in the context window: zero-shot (instruction only), one-shot (K=1) and few-shot (typically K=10–100, bounded by the 2048-token context). The model's weights are never updated; the task is specified purely as conditioning text. The motivation is that fine-tuning needs a labelled dataset for every task, and fine-tuned models can exploit spurious correlations in narrow training distributions, which makes comparisons with human-level generalisation questionable.",
+      "headline" : "In-context learning: the evaluation protocol"
+    },
+    {
+      "body" : "Eight sizes from 125M to 175B parameters, using the GPT-2 architecture (modified initialisation, pre-normalisation, reversible tokenisation) with alternating dense and locally banded sparse attention layers, as in the Sparse Transformer. GPT-3 175B has 96 layers, d_model = 12288, 96 heads of dimension 128 and a context of 2048 tokens. Larger models use larger batches (3.2M tokens for 175B) and smaller learning rates, and training used model parallelism across layers and within layers on V100 GPUs.",
+      "formula" : "n_{layers}=96,\\;d_{model}=12288,\\;n_{heads}=96,\\;d_{head}=128,\\;n_{ctx}=2048",
+      "headline" : "Model family and architecture"
+    },
+    {
+      "body" : "Training used about 300B tokens drawn from five mixtures: filtered Common Crawl (410B tokens, 60% of the sampling weight), WebText2 (19B, 22%), Books1 (12B, 8%), Books2 (55B, 8%) and Wikipedia (3B, 3%). Common Crawl was quality-filtered with a classifier trained to separate it from high-quality reference corpora, and fuzzy-deduplicated. Higher-quality sources are sampled more often than their size alone would suggest, so they are seen up to a few epochs, while the Common Crawl is seen less than once. The authors checked for test-set contamination and report it was imperfectly removed because of a bug, so they analysed clean subsets of each benchmark.",
+      "headline" : "Training data"
+    },
+    {
+      "body" : "Validation cross-entropy loss follows a smooth power law in training compute over several orders of magnitude, as in earlier scaling-law work. The more interesting finding is on downstream tasks: zero-shot performance improves steadily with size, but few-shot performance improves faster, so the gap between settings widens. The authors read this as larger models being better at in-context learning, i.e. at 'meta-learning' from the prompt alone. Training the 175B model took about 3.14e23 FLOPs (roughly 3640 petaflop/s-days).",
+      "formula" : "L(C)\\approx\\left(\\frac{C_c}{C}\\right)^{\\alpha}",
+      "headline" : "Scaling behaviour"
+    },
+    {
+      "body" : "On LAMBADA, few-shot GPT-3 reached 86.4% accuracy, more than 18 points above the prior state of the art. On TriviaQA closed-book few-shot it reached 71.2%, ahead of fine-tuned closed-book systems. Translation is strong into English but weaker out of it, reflecting that about 93% of the training words are English. On synthetic tasks, 2-digit addition is solved nearly perfectly few-shot, but accuracy falls to roughly 25% at 4 digits and 9% at 5 digits, showing the model has not learned a general algorithm. It could also generate news articles that human evaluators had trouble distinguishing from human-written ones.",
+      "headline" : "Results across tasks"
+    },
+    {
+      "body" : "The paper includes sections on misuse (disinformation, spam, phishing), on bias found in the model (gendered occupation associations, sentiment differences by race, and associations of religions with certain descriptive words) and on the energy cost of pre-training versus the cost of generating from the trained model. The authors argue that these should be measured alongside the headline accuracy numbers.",
+      "headline" : "Social impact and analysis"
+    }
+  ],
+  "lesson" : "Capabilities can emerge from scale alone, with no task-specific training. Evaluation protocol matters: the same model gives very different results zero-shot versus few-shot, and training data contamination must be checked.",
+  "limitations" : "Text synthesis can repeat itself or lose coherence over long passages. Performance remains near chance on some comparison and NLI tasks (e.g. ANLI, WiC) and on tasks that benefit from bidirectional context. The pre-training objective weights every token equally and the model is far less sample-efficient than humans. It is unclear whether few-shot prompting learns a new task or only retrieves skills seen during pre-training. Inference is expensive at 175B parameters, the model is hard to interpret, and it inherits biases of its training data.",
+  "numbers" : [
+    {
+      "label" : "Parameters",
+      "value" : "175B (96 layers, d_model 12288)"
+    },
+    {
+      "label" : "Context window",
+      "value" : "2048 tokens"
+    },
+    {
+      "label" : "Training tokens",
+      "value" : "≈300B"
+    },
+    {
+      "label" : "Training compute",
+      "value" : "≈3.14e23 FLOPs"
+    },
+    {
+      "label" : "LAMBADA (few-shot)",
+      "value" : "86.4% accuracy"
+    },
+    {
+      "label" : "TriviaQA closed-book (few-shot)",
+      "value" : "71.2%"
+    },
+    {
+      "label" : "Few-shot addition",
+      "value" : "≈100% for 2 digits, ≈25% for 4 digits, ≈9% for 5 digits"
+    }
+  ],
+  "prerequisites" : [
+    "attention-is-all-you-need"
+  ],
+  "readMinutes" : 12,
+  "shortTitle" : "GPT-3",
+  "summary" : "GPT-3 scales an autoregressive Transformer to 175B parameters, trained on about 300B tokens, and evaluates it without any gradient updates by placing task descriptions and K demonstrations in the prompt. Few-shot performance improves faster with scale than zero-shot, and is competitive with fine-tuned systems on several benchmarks, while failures remain on reasoning, NLI and multi-digit arithmetic.",
+  "title" : "Language Models are Few-Shot Learners",
+  "topic" : "language",
+  "url" : "https://arxiv.org/abs/2005.14165",
+  "venue" : "NeurIPS",
+  "whoShouldRead" : "You know autoregressive LMs and scaling laws, and want to understand the zero/one/few-shot protocol and where it breaks.",
+  "year" : 2020
+}

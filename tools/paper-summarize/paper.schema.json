@@ -1,0 +1,66 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id", "title", "shortTitle", "authors", "aboutAuthors", "year", "venue", "topic", "url",
+    "readMinutes", "hook", "whoShouldRead", "prerequisites", "insights", "numbers",
+    "limitations", "summary", "lesson", "glossary"
+  ],
+  "properties": {
+    "id": { "type": "string", "description": "lowercase-kebab-case slug of the short title, e.g. 'gpt-3'" },
+    "title": { "type": "string", "description": "Full paper title" },
+    "shortTitle": { "type": "string", "description": "Short name for the cover, at most ~4 words" },
+    "authors": { "type": "string", "description": "Surnames, e.g. 'Brown, Mann, Ryder et al.'" },
+    "aboutAuthors": { "type": "string", "description": "Who they are (affiliations) and why the paper matters, 1-2 sentences" },
+    "year": { "type": "integer" },
+    "venue": { "type": "string", "description": "Conference or journal as stated in the paper, else 'arXiv'" },
+    "topic": { "type": "string", "enum": ["architectures", "language", "reasoning", "alignment", "vision", "learning", "other"] },
+    "url": { "type": "string", "description": "https://arxiv.org/abs/<id>" },
+    "readMinutes": { "type": "integer" },
+    "hook": { "type": "string", "description": "One technical sentence stating what the paper does" },
+    "whoShouldRead": { "type": "string", "description": "Prerequisite knowledge and what the reader will get" },
+    "prerequisites": { "type": "array", "items": { "type": "string" }, "description": "ids of papers to read first, chosen only from the known list" },
+    "insights": {
+      "type": "array",
+      "description": "5 to 6 key insights in reading order",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["headline", "body"],
+        "properties": {
+          "headline": { "type": "string" },
+          "body": { "type": "string", "description": "3-6 technical sentences: mechanism, numbers, design choices" },
+          "formula": { "type": "string", "description": "Optional LaTeX (SwiftMath subset). Separate several lines with '||'" }
+        }
+      }
+    },
+    "numbers": {
+      "type": "array",
+      "description": "4 to 7 key facts: sizes, hyperparameters, headline results with units",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["label", "value"],
+        "properties": { "label": { "type": "string" }, "value": { "type": "string" } }
+      }
+    },
+    "limitations": { "type": "string", "description": "Weaknesses, caveats, what later work changed" },
+    "summary": { "type": "string", "description": "In a nutshell: 2-3 sentences" },
+    "lesson": { "type": "string", "description": "One transferable takeaway for practitioners" },
+    "glossary": {
+      "type": "array",
+      "description": "0 to 6 technical terms used in the text that are not in the known glossary",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["term", "definition"],
+        "properties": {
+          "term": { "type": "string" },
+          "aliases": { "type": "array", "items": { "type": "string" } },
+          "definition": { "type": "string" },
+          "formula": { "type": "string" }
+        }
+      }
+    }
+  }
+}

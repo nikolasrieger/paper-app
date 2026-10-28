@@ -1,0 +1,69 @@
+{
+  "aboutAuthors" : "Google Research, Brain Team. Showed that reasoning ability in large LMs can be elicited with prompting alone.",
+  "authors" : "Wei, Wang, Schuurmans, Bosma, Ichter, Xia, Chi, Le, Zhou",
+  "hook" : "Few-shot exemplars that include intermediate reasoning steps unlock multi-step reasoning in models of roughly 100B parameters and up.",
+  "id" : "chain-of-thought",
+  "insights" : [
+    {
+      "body" : "Standard few-shot prompting uses exemplars of the form <input, output>. Chain-of-thought prompting uses <input, chain of thought, output>, where the chain is a series of intermediate natural-language reasoning steps leading to the answer. The model imitates this format and produces its own chain before the answer. The authors list four attractive properties: decomposition allocates more computation to harder problems, the chain gives an interpretable window into behaviour, it applies to any task humans solve with language, and it can be elicited with prompting alone, without finetuning.",
+      "formula" : "\\text{Standard: } Q\\rightarrow A||\\text{Chain of thought: } Q\\rightarrow r_1,r_2,\\ldots,r_n\\rightarrow A",
+      "headline" : "What a chain of thought is"
+    },
+    {
+      "body" : "The same 8 hand-written exemplars with chains are used across five math word-problem benchmarks (GSM8K, SVAMP, ASDiv, AQuA, MAWPS). Models span GPT-3 (350M–175B), LaMDA (422M–137B), PaLM (8B, 62B, 540B), UL2 20B and Codex. Decoding is greedy. The baseline is standard few-shot prompting with the same questions and answers but no chains, so any difference is due to the intermediate reasoning text.",
+      "headline" : "Experimental setup"
+    },
+    {
+      "body" : "For models below roughly 10B parameters, CoT gives no benefit or hurts: they write fluent but illogical chains. Gains appear at around 100B parameters. The effect is also larger for harder, multi-step problems: on GSM8K, PaLM 540B improves from 17.9% with standard prompting to 56.9% with CoT, surpassing the previous best, a fine-tuned GPT-3 175B with a verifier (55%). On single-step sets such as the easy MAWPS subsets, improvements are small or negative.",
+      "headline" : "Reasoning is an emergent ability of scale"
+    },
+    {
+      "body" : "Three variants test other explanations. (1) Equation only: writing just the math equation before the answer does not help much on GSM8K, since the questions need natural-language semantic parsing. (2) Variable compute only: replacing the chain with dots (…) matching its length performs like the baseline, so extra tokens alone don't help. (3) Chain after the answer: giving the reasoning after the answer shows no gain, so the benefit isn't merely activating relevant knowledge. The sequential reasoning before the answer is what matters. Results hold across different annotators and exemplar sets, though variance exists.",
+      "headline" : "Ablations: it is the reasoning, not the extra tokens"
+    },
+    {
+      "body" : "On commonsense tasks (CSQA, StrategyQA, Date and Sports understanding, SayCan robot planning) CoT improves the largest models, with PaLM 540B surpassing the earlier state of the art on StrategyQA. On symbolic tasks (last-letter concatenation, coin-flip state tracking), CoT also enables length generalisation: given exemplars with 2 words or flips, large models extrapolate to 3 and 4, where standard prompting fails nearly completely.",
+      "headline" : "Beyond arithmetic"
+    },
+    {
+      "body" : "For LaMDA 137B on GSM8K, of 50 correct answers almost all had logically correct chains and only 2 were right by chance. Among 50 incorrect answers, about 46% of the chains were almost correct, with minor errors such as a calculator slip, a missing step or a symbol mapping error, and 54% had major errors in semantic understanding or coherence. Scaling PaLM from 62B to 540B fixed a large share of one-step-missing and semantic-understanding errors, consistent with scale improving reasoning.",
+      "headline" : "Error analysis"
+    }
+  ],
+  "lesson" : "Giving a model room to produce intermediate tokens is a form of extra computation per problem. For multi-step tasks, make the model reason before answering, and check that the chain is actually used, not decorative.",
+  "limitations" : "A chain does not guarantee correct reasoning, nor that the chain reflects the model's actual computation, so the answer can be right for the wrong reasons or wrong with a plausible-looking chain. Writing exemplars with chains is manual effort, and costs grow if you need task-specific fine-tuning data. The effect appears only for very large models, which are expensive to serve, and longer outputs increase inference cost. The benefit on tasks that are not multi-step is small.",
+  "numbers" : [
+    {
+      "label" : "Exemplars per task",
+      "value" : "8 hand-written (arithmetic)"
+    },
+    {
+      "label" : "GSM8K: PaLM 540B standard prompting",
+      "value" : "17.9%"
+    },
+    {
+      "label" : "GSM8K: PaLM 540B chain-of-thought",
+      "value" : "56.9% (previous best: 55% fine-tuned GPT-3 + verifier)"
+    },
+    {
+      "label" : "Scale where it starts to help",
+      "value" : "≈100B parameters"
+    },
+    {
+      "label" : "Error analysis (LaMDA 137B, wrong answers)",
+      "value" : "46% minor errors, 54% major errors"
+    }
+  ],
+  "prerequisites" : [
+    "gpt-3"
+  ],
+  "readMinutes" : 9,
+  "shortTitle" : "Chain-of-Thought Prompting",
+  "summary" : "Adding intermediate reasoning steps to few-shot exemplars makes models of about 100B+ parameters considerably better at arithmetic, commonsense and symbolic reasoning, without any finetuning. Ablations show the gain comes from the natural-language reasoning produced before the answer, and PaLM 540B with eight exemplars set a new state of the art on GSM8K.",
+  "title" : "Chain-of-Thought Prompting Elicits Reasoning in Large Language Models",
+  "topic" : "reasoning",
+  "url" : "https://arxiv.org/abs/2201.11903",
+  "venue" : "NeurIPS",
+  "whoShouldRead" : "You know few-shot prompting and want to know exactly what CoT changes, which models it works for, and what the ablations rule out.",
+  "year" : 2022
+}

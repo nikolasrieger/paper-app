@@ -1,0 +1,67 @@
+{
+  "aboutAuthors" : "Anthropic. The paper proposes training assistants with a written set of principles and AI-generated feedback, with models up to 52B parameters.",
+  "authors" : "Bai, Kadavath, Kundu, Askell, et al.",
+  "hook" : "Replacing human harmlessness labels with AI feedback guided by a written constitution: supervised self-revision plus RL from AI feedback (RLAIF).",
+  "id" : "constitutional-ai",
+  "insights" : [
+    {
+      "body" : "RLHF needs large numbers of human comparisons, and training only for harmlessness tends to produce evasive models that refuse or give generic answers instead of engaging. The goal is a harmless but non-evasive assistant. Human labels are kept only for helpfulness. For harmlessness, the only human input is a list of natural-language principles (the paper uses 16), which makes the training objective explicit and easier to inspect and change than thousands of implicit labels.",
+      "headline" : "Motivation: scalable oversight and the harmlessness–helpfulness tension"
+    },
+    {
+      "body" : "Start from a helpful-only RLHF model and a set of red-team prompts that elicit harmful behaviour. For each prompt: (1) sample an initial, usually harmful, response; (2) sample a principle at random and prompt the model to critique its own response with respect to it; (3) prompt it to revise the response in light of the critique. This can be repeated for several rounds. The final revised responses, together with helpfulness data to preserve usefulness, are used to supervised-finetune the pre-trained model, yielding SL-CAI.",
+      "formula" : "\\text{prompt}\\rightarrow y_0\\rightarrow\\text{critique}(c_k)\\rightarrow y_1\\rightarrow\\cdots",
+      "headline" : "Stage 1: supervised learning from critiques and revisions (SL-CAI)"
+    },
+    {
+      "body" : "Sample two responses per prompt from the SL-CAI model. A feedback model is shown the prompt, a principle and both responses as a multiple-choice question ('Which response is less harmful? (A) or (B)') and the normalised log-probabilities of the answers A and B act as soft preference labels. A preference model is trained on these AI harmlessness labels mixed with human helpfulness labels, and the policy is then optimised against it with RL, as in RLHF. Using soft labels gives more information than hard ones, and prompting the feedback model with chain-of-thought reasoning improves label quality, although the probabilities then become over-confident and get clamped.",
+      "formula" : "p(A)=\\frac{P(A)}{P(A)+P(B)}",
+      "headline" : "Stage 2: RL from AI feedback (RL-CAI)"
+    },
+    {
+      "body" : "On crowdworker comparisons scored as Elo, RL-CAI models are Pareto-improvements over the RLHF baselines: for a given helpfulness score they are more harmless, and they are far less evasive, typically explaining their objections instead of refusing. SL-CAI alone already improves harmlessness over the helpful-only model. A second experiment shows AI-feedback quality scales with size: on a set of multiple-choice HHH comparisons, large pre-trained models with chain-of-thought approach the accuracy of preference models trained on human labels.",
+      "headline" : "Results"
+    },
+    {
+      "body" : "Over-training RL-CAI makes the model produce boilerplate, preachy or accusatory responses, for which the authors added principles that discourage such tone. The revisions sometimes do not change the response much, and the strength of the supervision depends on the revising model being capable enough to critique accurately. Revising multiple times has diminishing returns, and critique-then-revise performs somewhat better than revising directly for smaller models, with the gap closing for larger ones.",
+      "headline" : "Failure modes and design choices"
+    }
+  ],
+  "lesson" : "Making the objective an explicit, human-readable specification lets a model supervise itself, and gives you something to audit and edit. The trade-off is that the specification and the feedback model's competence become the new points of failure.",
+  "limitations" : "The constitution is written by the developers, so the values encoded are a design decision that this method does not itself justify. Reducing human involvement lowers the cost of experiments, which could also lower the barrier for training models for harmful purposes. Robustness to adversarial prompts (jailbreaks) is not thoroughly evaluated. The quality of AI feedback depends on the capability of the feedback model, and over-optimisation can produce stilted, moralising responses.",
+  "numbers" : [
+    {
+      "label" : "Model scale",
+      "value" : "up to 52B parameters"
+    },
+    {
+      "label" : "Human labels for harmlessness",
+      "value" : "none (principles only); human labels kept for helpfulness"
+    },
+    {
+      "label" : "Principles in the constitution",
+      "value" : "16"
+    },
+    {
+      "label" : "Stage 1",
+      "value" : "critique → revision → supervised finetuning (SL-CAI)"
+    },
+    {
+      "label" : "Stage 2",
+      "value" : "AI preference labels → preference model → RL (RL-CAI)"
+    }
+  ],
+  "prerequisites" : [
+    "gpt-3",
+    "chain-of-thought"
+  ],
+  "readMinutes" : 11,
+  "shortTitle" : "Constitutional AI",
+  "summary" : "Constitutional AI trains in two stages. In the supervised stage, a model critiques and revises its own harmful responses according to written principles and is finetuned on the revisions. In the RL stage, a model labels which of two responses better follows a principle, a preference model is trained on these labels, and the policy is optimised against it. The result is more harmless and less evasive than RLHF, with no human harmlessness labels.",
+  "title" : "Constitutional AI: Harmlessness from AI Feedback",
+  "topic" : "alignment",
+  "url" : "https://arxiv.org/abs/2212.08073",
+  "venue" : "arXiv",
+  "whoShouldRead" : "You know RLHF (reward models, PPO) and want the exact two-stage pipeline of Constitutional AI and how it differs.",
+  "year" : 2022
+}
