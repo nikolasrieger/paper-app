@@ -77,7 +77,7 @@ Nothing about that check is stored in the paper file or shown in the app.
 ## File format
 
 One JSON file per paper, named `<id>.json`. `paper.schema.json` is the full schema and `examples/` has finished
-entries (the five papers that used to ship inside the app; drop any of them into your synced folder to bring it back). Formulas are LaTeX in the subset the app's renderer supports;
+entries that can be copied into your synced folder. Formulas are LaTeX in the subset the app's renderer supports;
 several lines go in one string separated by `||`. The optional `glossary` array adds terms that are underlined in the
 text and open a definition card. You can write or edit these files by hand; the app shows a clear message for any file
 it cannot read and carries on with the rest.

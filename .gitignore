@@ -24,7 +24,7 @@ xcuserdata/
 *.key
 *.mobileprovision
 
-# Downloaded audio models and personal queue output
+# Downloaded audio models and generated queue output
 tools/paper-audio/models/
 queue.txt
 queue-errors.txt

@@ -14,5 +14,3 @@ In the app’s settings, choose a papers folder. Start with JSON files from [exa
 
 - [paper-summarize](tools/paper-summarize): generate summaries from arXiv PDFs using Anthropic’s API (sends PDFs to Anthropic; API usage is billed).
 - [paper-audio](tools/paper-audio): generate narration locally with Kokoro.
-
-Keep credentials in your environment and your personal paper library outside this repository.

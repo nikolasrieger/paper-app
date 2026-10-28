@@ -30,7 +30,7 @@ HERE = Path(__file__).resolve().parent
 DEFAULT_MODEL = "claude-opus-5-5"
 USER_AGENT = "paper-summarize/1.0 (personal reading app)"
 TOPICS = ["architectures", "language", "reasoning", "alignment", "vision", "learning", "other"]
-# The app ships no papers any more; prerequisites may only point at papers already in the folder.
+# Prerequisites may only point at papers already in the folder.
 BUILTIN_PAPERS: dict[str, str] = {}
 ARXIV_ID = re.compile(r"(\d{4}\.\d{4,5}|[a-z\-]+(?:\.[A-Z]{2})?/\d{7})(?:v\d+)?", re.IGNORECASE)
 
